@@ -14,7 +14,6 @@ O projeto segue uma organização em camadas, contendo controller (responsável 
 
 O banco utiliza um tipo ENUM para prioridade e uma tabela de tarefas com UUID como chave primária.
 
-```sql
 CREATE TYPE prioridade_tarefa AS ENUM ('BAIXA', 'MEDIA', 'ALTA');
 
 CREATE TABLE tarefas (
@@ -23,28 +22,27 @@ CREATE TABLE tarefas (
     descricao VARCHAR(255),
     concluido BOOLEAN NOT NULL,
     prioridade prioridade_tarefa NOT NULL
+    dt_tarefa DATE NOT NULL
 );
-```
+
 
 ## Configuração da aplicação
 
-No arquivo `application.properties`, configure a conexão com o PostgreSQL:
+No arquivo application.properties, configure a conexão com o PostgreSQL:
 
-```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/tarefas_db
 spring.datasource.username=postgres
 spring.datasource.password=SUA_SENHA
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
-```
+
 
 ## Como executar
 
 Para iniciar a aplicação, execute no terminal:
 
-```
 mvn spring-boot:run
-```
+
 
 A API ficará disponível em `http://localhost:8080`.
 
@@ -53,19 +51,18 @@ A API ficará disponível em `http://localhost:8080`.
 Criar tarefa: `POST /tarefas`
 Listar tarefas: `GET /tarefas`
 Atualizar tarefa: `PUT /tarefas/{id}`
-Atualizar status (toggle): `PATCH /tarefas/{id}/concluido`
+Atualizar status (toggle): `PATCH /tarefas/{id}/concluir`
 Deletar tarefa: `DELETE /tarefas/{id}`
 
 ### Exemplo de criação (JSON)
 
-```json
 {
   "titulo": "Estudar",
   "descricao": "Spring Boot",
   "concluido": false,
   "prioridade": "ALTA"
+  "dataTarefa": "DD/MM/YYYY"
 }
-```
 
 ## Filtros disponíveis
 
@@ -80,19 +77,16 @@ A API permite filtros via parâmetros de query:
 
 Criar tarefa:
 
-```powershell
 Invoke-RestMethod -Method Post -Uri "http://localhost:8080/tarefas" -ContentType "application/json" -Body '{"titulo":"Teste","descricao":"ok","concluido":false,"prioridade":"MEDIA"}'
-```
+
 
 Listar tarefas:
 
-```powershell
 Invoke-RestMethod -Uri "http://localhost:8080/tarefas"
-```
 
 ## Funcionalidades implementadas
 
-CRUD completo, ordenação por status, filtros dinâmicos, busca por texto (LIKE), enum mapeado no PostgreSQL, PATCH parcial e tratamento de erros com retorno 404.
+CRUD completo, ordenação por status e data mais proxima da atual, ocultamento da tarefa caso a data definida passe, filtros dinâmicos, busca por texto (LIKE), enum mapeado no PostgreSQL, PATCH parcial, descartamento de dados após 30 dias passados da data definida da tarefa e tratamento de erros com retorno 404.
 
 ## Próximas melhorias
 
